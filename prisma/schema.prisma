@@ -26,6 +26,7 @@ model Interest {
   name  String @unique
 
   users UserInterest[]
+  skills Skill[] 
 }
 
 model UserInterest {
@@ -38,4 +39,40 @@ model UserInterest {
   interest Interest @relation(fields: [interestId], references: [id])
 
   @@unique([userId, interestId])
+}
+
+
+model Skill {
+  id          String   @id @default(uuid())
+  name        String
+  interestId  String
+
+  interest    Interest @relation(fields: [interestId], references: [id])
+  questions   Question[]
+}
+
+
+model Question {
+  id         String   @id @default(uuid())
+  text       String
+  skillId    String
+  difficulty Difficulty
+  options    Option[]
+
+  skill      Skill @relation(fields: [skillId], references: [id])
+}
+
+model Option {
+  id         String  @id @default(uuid())
+  text       String
+  isCorrect  Boolean
+  questionId String
+
+  question   Question @relation(fields: [questionId], references: [id])
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
 }
