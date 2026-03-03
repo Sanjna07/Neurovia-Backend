@@ -7,11 +7,26 @@ export const getAllInterests = async (_: Request, res: Response) => {
 };
 
 export const createInterest = async (req: Request, res: Response) => {
-  const { name } = req.body;
+  try {
+    const { name } = req.body;
 
-  const interest = await prisma.interest.create({
-    data: { name },
-  });
+    if (!name) {
+      return res.status(400).json({ error: "Name is required" });
+    }
 
-  res.status(201).json(interest);
+    const interest = await prisma.interest.create({
+      data: { name }
+    });
+
+    res.status(201).json(interest);
+
+  } catch (error: any) {
+
+    if (error.code === "P2002") {
+      return res.status(400).json({ error: "Interest already exists" });
+    }
+
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
 };
