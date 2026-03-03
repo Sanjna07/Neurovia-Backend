@@ -24,7 +24,10 @@ export const addUserInterest = async (req: Request, res: Response) => {
   }
 }
 
-export const getUserInterests = async (req: Request, res: Response) => {
+export const getUserInterests = async (
+  req: Request<{ userId: string }>,
+  res: Response
+) => {
   try {
     const { userId } = req.params
 

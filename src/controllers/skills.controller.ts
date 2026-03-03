@@ -23,12 +23,15 @@ export const createSkill = async (req: Request, res: Response) => {
   }
 }
 
-export const getSkillsByInterest = async (req: Request, res: Response) => {
+export const getSkillsByInterest = async (
+  req: Request<{ interestId: string }>,
+  res: Response
+) => {
   try {
     const { interestId } = req.params
 
     const skills = await prisma.skill.findMany({
-      where: { interestId },
+      where: { interestId }
     })
 
     res.json(skills)
