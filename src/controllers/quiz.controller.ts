@@ -35,7 +35,7 @@ export const getQuizBySkill = async (
 export const submitQuiz = async (req: Request, res: Response) => {
   try {
 
-    const { answers } = req.body
+    const { userId, skillId, answers } = req.body
 
     let score = 0
 
@@ -49,9 +49,19 @@ export const submitQuiz = async (req: Request, res: Response) => {
       }
     }
 
+    const attempt = await prisma.quizAttempt.create({
+      data: {
+        userId,
+        skillId,
+        score,
+        total: answers.length
+      }
+    })
+
     res.json({
-      totalQuestions: answers.length,
-      score
+      score,
+      total: answers.length,
+      attempt
     })
 
   } catch (error) {
