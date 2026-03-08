@@ -19,6 +19,7 @@ model User {
   createdAt DateTime @default(now())
 
   interests UserInterest[]
+  quizAttempts QuizAttempt[] 
 }
 
 model Interest {
@@ -49,6 +50,7 @@ model Skill {
 
   interest    Interest @relation(fields: [interestId], references: [id])
   questions   Question[]
+  quizAttempts QuizAttempt[]
 }
 
 
@@ -75,4 +77,16 @@ enum Difficulty {
   EASY
   MEDIUM
   HARD
+}
+
+model QuizAttempt {
+  id        String   @id @default(uuid())
+  userId    String
+  skillId   String
+  score     Int
+  total     Int
+  createdAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id])
+  skill Skill @relation(fields: [skillId], references: [id])
 }

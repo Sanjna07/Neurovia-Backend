@@ -8,6 +8,7 @@ import skillRoutes from "./routes/skills.routes";
 import questionRoutes from "./routes/question.routes";
 import optionsRoutes from "./routes/options.routes";
 import aiRoutes from "./routes/ai.routes";
+import quizRoutes from "./routes/quiz.routes";
 
 
 const app = express();
@@ -21,5 +22,6 @@ app.use("/api/skills", skillRoutes);
 app.use("/api/questions", questionRoutes);
 app.use("/api/options", optionsRoutes);
 app.use("/api/ai", aiRoutes);
+app.use("/api/quiz", quizRoutes);
 
 export default app;
