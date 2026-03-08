@@ -6,6 +6,8 @@ import userInterestRoutes from "./routes/userInterest.routes";
 import interestRoutes from "./routes/interest.routes";
 import skillRoutes from "./routes/skills.routes";
 import questionRoutes from "./routes/question.routes";
+import optionsRoutes from "./routes/options.routes";
+import aiRoutes from "./routes/ai.routes";
 
 
 const app = express();
@@ -17,5 +19,7 @@ app.use("/api/user-interests", userInterestRoutes);
 app.use("/api/interests", interestRoutes);
 app.use("/api/skills", skillRoutes);
 app.use("/api/questions", questionRoutes);
+app.use("/api/options", optionsRoutes);
+app.use("/api/ai", aiRoutes);
 
 export default app;

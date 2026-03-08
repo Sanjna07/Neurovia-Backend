@@ -4,10 +4,18 @@ import { Difficulty } from "@prisma/client"
 
 export const createQuestion = async (req: Request, res: Response) => {
   try {
-    const { text, skillId, difficulty } = req.body
+    const { text, skillId, difficulty } = req.body as{
+        text: string
+        skillId: string
+        difficulty: Difficulty
+    }
 
     if (!text || !skillId || !difficulty) {
       return res.status(400).json({ error: "All fields required" })
+    }
+
+    if (!Object.values(Difficulty).includes(difficulty)) {
+      return res.status(400).json({ error: "Invalid difficulty value" })
     }
 
     const question = await prisma.question.create({
