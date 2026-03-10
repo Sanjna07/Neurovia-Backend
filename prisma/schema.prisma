@@ -13,13 +13,18 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
+  id          String   @id @default(uuid())
+  email       String   @unique
+  name        String?
 
-  interests UserInterest[]
-  quizAttempts QuizAttempt[] 
+  password    String?
+  provider    String   @default("email")
+  providerId  String?
+
+  createdAt   DateTime @default(now())
+
+  interests   UserInterest[]
+  quizAttempts QuizAttempt[]
 }
 
 model Interest {

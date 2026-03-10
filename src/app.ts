@@ -10,6 +10,8 @@ import optionsRoutes from "./routes/options.routes";
 import aiRoutes from "./routes/ai.routes";
 import quizRoutes from "./routes/quiz.routes";
 import analyticsRoutes from "./routes/analytics.routes";
+import recommendationRoutes from "./routes/recommendation.routes";
+import testRoutes from "./routes/test.routes";
 
 
 const app = express();
@@ -25,5 +27,7 @@ app.use("/api/options", optionsRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/quiz", quizRoutes);
 app.use("/api/analytics", analyticsRoutes);
+app.use("/api/recommendations", recommendationRoutes);
+app.use("/api/test", testRoutes);
 
 export default app;

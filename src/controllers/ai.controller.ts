@@ -17,6 +17,16 @@ export const generateQuestionsForSkill = async (
       return res.status(404).json({ error: "Skill not found" })
     }
 
+    const existing = await prisma.question.findFirst({
+      where: { skillId }
+    })
+
+    if (existing) {
+      return res.json({
+        message: "Questions already exist for this skill"
+      })
+    }
+
     const aiQuestions = await generateQuizQuestions(skill.name)
 
     const savedQuestions = []
@@ -47,3 +57,4 @@ export const generateQuestionsForSkill = async (
     res.status(500).json({ error: "AI generation failed" })
   }
 }
+
