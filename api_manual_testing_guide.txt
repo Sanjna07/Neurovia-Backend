@@ -1,0 +1,160 @@
+===================================================
+      NUEROVIA API MANUAL TESTING GUIDE
+===================================================
+
+This guide contains all the API endpoints in your backend, mapping the workflow from user registration to getting the continuous assessment roadmap. You can use Thunder Client, Postman, or cURL to test these endpoints.
+
+Base URL: http://localhost:5000/api
+
+---
+1. 🔐 AUTHENTICATION
+---
+
+📝 Register User
+- Method: POST
+- URL: /users/register
+- Body (JSON):
+{
+  "email": "testuser1@example.com",
+  "password": "password123",
+  "name": "Test User"
+}
+- Expected Response (201 Created):
+{
+  "id": "user_id_here",
+  "email": "testuser1@example.com",
+  ...
+}
+
+🔑 Login User
+- Method: POST
+- URL: /users/login
+- Body (JSON):
+{
+  "email": "testuser1@example.com",
+  "password": "password123"
+}
+- Expected Response (200 OK): Returns user details and token.
+
+
+---
+2. 🎯 INTERESTS & SKILLS (Domain Mapping)
+---
+
+➕ Create an Interest (e.g., Technology)
+- Method: POST
+- URL: /interests
+- Body (JSON):
+{
+  "name": "Technology"
+}
+- Expected Response (201 Created): Returns interest object with ID.
+
+➕ Create a Skill under an Interest (e.g., Python)
+- Method: POST
+- URL: /skills
+- Body (JSON):
+{
+  "name": "Python",
+  "interestId": "<INTEREST_ID_FROM_ABOVE>"
+}
+- Expected Response (201 Created): Returns skill object with ID.
+
+
+---
+3. 📝 USER'S INTEREST SELECTION
+---
+
+➕ Save User's Chosen Interests
+- Method: POST
+- URL: /user-interests
+- Body (JSON):
+{
+  "userId": "<USER_ID>",
+  "interestId": "<INTEREST_ID_1>",
+  "priority": 1
+}
+- Expected Response (201 Created): Success message.
+
+
+---
+4. 🤖 AI QUESTION GENERATION
+---
+
+✨ Generate Questions for a Skill
+- Method: GET
+- URL: /ai/generate/<SKILL_ID>
+- Description: This triggers Gemini AI to generate a set of practice questions for the specified skill and saves them to your database! You only do this once per skill.
+- Expected Response (200 OK): Returns the array of generated questions and their options. (Note: May take ~10 seconds).
+
+
+---
+5. 🧠 QUIZ & ROADMAP (The Continuous Assessment Loop)
+---
+
+📝 Fetch the Quiz Questions
+- Method: GET
+- URL: /quiz/<SKILL_ID>
+- Description: Before submitting a quiz, the frontend calls this to get 5 questions for the user to answer.
+- Expected Response (200 OK): Returns `questions` array. Notice the `options` array inside each question; copy one of the `id` strings from here to use in the submission step!
+
+
+🎯 Trigger INITIAL Quiz (Generates the Roadmap in background)
+- Method: POST
+- URL: /quiz/submit
+- Description: When a user takes their very first diagnostic quiz to determine their level, send an INITIAL type. This evaluates their score and triggers Gemini AI to generate a 5-step roadmap.
+- Body (JSON):
+{
+  "userId": "<USER_ID>",
+  "skillId": "<SKILL_ID>",
+  "answers": [],
+  "type": "INITIAL"
+}
+- Expected Response (200 OK):
+Returns the score, total questions evaluate, and the quiz attempt info. 
+*Note: Wait 15-20 seconds after this step so the AI has time to generate the roadmap topics and search YouTube/Google for resources!*
+
+🗺️ Fetch the Generated Roadmap (Dashboard View)
+- Method: GET
+- URL: /roadmap/<USER_ID>/<SKILL_ID>
+- Description: This is the endpoint your frontend will call to display the user's progress tree.
+- Expected Response (200 OK):
+{
+  "id": "roadmap_id",
+  "currentLevel": "beginner",
+  "progress": 0,
+  "nodes": [
+    {
+      "id": "node_id_1",
+      "title": "Introduction to Python",
+      "status": "IN_PROGRESS",
+      "order": 1,
+      "resources": { "free": [ ... YouTube links ... ] }
+    },
+    {
+       "title": "Data Structures",
+       "status": "LOCKED",
+       "order": 2, ...
+    }
+  ]
+}
+
+🎓 Trigger PRACTICE Quiz (Updates the Roadmap Progress)
+- Method: POST
+- URL: /quiz/submit
+- Description: Once the user finishes studying a node, they take a practice quiz. Send a good score to unlock the next node.
+- Body (JSON):
+{
+  "userId": "<USER_ID>",
+  "skillId": "<SKILL_ID>",
+  "answers": [ 
+    {"optionId": "dummy_1"} 
+  ], 
+  "type": "PRACTICE"
+}
+- Expected Response (200 OK): Returns score and updates the roadmap in the database.
+
+🔄 Re-fetch the Roadmap to see updates
+- Method: GET
+- URL: /roadmap/<USER_ID>/<SKILL_ID>
+- Expected Response: You will see node 1 status is now "COMPLETED", node 2 is "IN_PROGRESS", and `progress` percentage has increased!

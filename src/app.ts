@@ -12,6 +12,7 @@ import quizRoutes from "./routes/quiz.routes";
 import analyticsRoutes from "./routes/analytics.routes";
 import recommendationRoutes from "./routes/recommendation.routes";
 import testRoutes from "./routes/test.routes";
+import roadmapRoutes from "./routes/roadmap.routes";
 
 
 const app = express();
@@ -29,5 +30,6 @@ app.use("/api/quiz", quizRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/recommendations", recommendationRoutes);
 app.use("/api/test", testRoutes);
+app.use("/api/roadmap", roadmapRoutes);
 
 export default app;

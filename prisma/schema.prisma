@@ -23,8 +23,9 @@ model User {
 
   createdAt   DateTime @default(now())
 
-  interests   UserInterest[]
+  interests    UserInterest[]
   quizAttempts QuizAttempt[]
+  roadmaps     Roadmap[]
 }
 
 model Interest {
@@ -54,8 +55,9 @@ model Skill {
   interestId  String
 
   interest    Interest @relation(fields: [interestId], references: [id])
-  questions   Question[]
+  questions    Question[]
   quizAttempts QuizAttempt[]
+  roadmaps     Roadmap[]
 }
 
 
@@ -88,10 +90,54 @@ model QuizAttempt {
   id        String   @id @default(uuid())
   userId    String
   skillId   String
+
   score     Int
   total     Int
+
+  type      QuizType @default(INITIAL)
   createdAt DateTime @default(now())
 
   user  User  @relation(fields: [userId], references: [id])
   skill Skill @relation(fields: [skillId], references: [id])
+}
+
+enum QuizType {
+  INITIAL
+  PRACTICE
+}
+
+model Roadmap {
+  id          String   @id @default(uuid())
+  userId      String
+  skillId     String
+  currentLevel String  
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  nodes       RoadmapNode[]
+  
+  user        User     @relation(fields: [userId], references: [id])
+  skill       Skill    @relation(fields: [skillId], references: [id])
+
+  @@unique([userId, skillId])
+}
+
+model RoadmapNode {
+  id          String   @id @default(uuid())
+  roadmapId   String
+  title       String
+  description String?
+  resources   Json?    
+  
+  status      NodeStatus @default(LOCKED) 
+  order       Int 
+
+  roadmap     Roadmap  @relation(fields: [roadmapId], references: [id], onDelete: Cascade)
+}
+
+enum NodeStatus {
+  LOCKED
+  IN_PROGRESS
+  COMPLETED
 }
